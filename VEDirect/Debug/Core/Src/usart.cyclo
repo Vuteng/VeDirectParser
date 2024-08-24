@@ -1,0 +1,12 @@
+../Drivers/CMSIS/Include/core_cm0plus.h:741:22:__NVIC_EnableIRQ	2
+../Drivers/CMSIS/Include/core_cm0plus.h:850:22:__NVIC_SetPriority	2
+../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_usart.h:634:22:LL_USART_Enable	1
+../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_usart.h:2673:22:LL_USART_ConfigAsyncMode	1
+../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_usart.h:3193:26:LL_USART_IsActiveFlag_TEACK	2
+../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_usart.h:3204:26:LL_USART_IsActiveFlag_REACK	2
+../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_bus.h:467:22:LL_APB1_GRP1_EnableClock	1
+../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_bus.h:1135:22:LL_IOP_GRP1_EnableClock	1
+../Core/Src/usart.c:31:6:MX_USART2_UART_Init	5
+../Core/Src/usart.c:75:6:MX_USART3_UART_Init	3
+../Core/Src/usart.c:144:6:HAL_UART_MspInit	3
+../Core/Src/usart.c:185:6:HAL_UART_MspDeInit	2
