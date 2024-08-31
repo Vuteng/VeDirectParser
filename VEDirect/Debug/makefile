@@ -60,8 +60,8 @@ all: main-build
 main-build: VEDirect.elf secondary-outputs
 
 # Tool invocations
-VEDirect.elf VEDirect.map: $(OBJS) $(USER_OBJS) C:\Users\repin\STM32CubeIDE\workspace_1.16.0\VEDirect\STM32G071RBTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "VEDirect.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"C:\Users\repin\STM32CubeIDE\workspace_1.16.0\VEDirect\STM32G071RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="VEDirect.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+VEDirect.elf VEDirect.map: $(OBJS) $(USER_OBJS) C:\Users\nexod\git\VeDirectParser\VEDirect\STM32G071RBTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "VEDirect.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"C:\Users\nexod\git\VeDirectParser\VEDirect\STM32G071RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="VEDirect.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

@@ -27,17 +27,12 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#define BUFFER_SIZE 512
+
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-extern volatile uint16_t uart_index;            // Index for next character
-extern volatile uint8_t frame_ready;            // Flag indicating frame completion
-extern volatile uint8_t frame_number;           // Frame counter
-extern volatile uint8_t checksum_calculated;    //calculated checksum
-extern volatile uint8_t checksum_received;      //if checksum received
-extern volatile char g_uart_buffer[BUFFER_SIZE]; //buffer for received data for transmission
+
 //checksum in the current frame
 /* USER CODE END ET */
 

@@ -21,7 +21,8 @@
 #include "usart.h"
 #include "gpio.h"
 #include "stm32g0xx_it.h"
-
+#include <uart_handler.h>
+#include <parser.h>
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -165,6 +166,8 @@ void process_frame(void)
         // Check if the calculated checksum matches the received checksum
         if ((checksum_calculated % 256) == checksum_received)
         {
+        	parse_frame(g_uart_buffer);
+
             HAL_UART_Transmit(&huart2, g_uart_buffer, uart_index, 1000);
         }
         else
