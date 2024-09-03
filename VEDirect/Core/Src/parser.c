@@ -4,6 +4,18 @@
 
 vedirect_data_t ve_data;
 
+volatile uint8_t checksum_calculated;
+
+void calculate_checksum(char *frame, uint16_t size)
+{
+	checksum_calculated = 0;
+
+	for(int i = 0; i < size; i++){
+        checksum_calculated = (checksum_calculated + (uint8_t)frame[i]) % 256;
+    }
+    printf("Calculated checksum: %d", checksum_calculated);
+}
+
 void parse_frame(char *frame)
 {
     // Initialize field count

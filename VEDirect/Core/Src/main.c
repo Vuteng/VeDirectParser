@@ -18,14 +18,16 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "dma.h"
 #include "usart.h"
 #include "gpio.h"
-#include "stm32g0xx_it.h"
-#include <uart_handler.h>
-#include <parser.h>
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <uart_handler.h>
+#include <parser.h>
+#include <stdio.h>
+#include "SEGGER_RTT.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -46,13 +48,21 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+uint8_t rx_buffer_1[BUFFER_SIZE];
+uint8_t rx_buffer_2[BUFFER_SIZE];
 
+ProtocolRxBuff protocol_rx_buff = {
+    .p_rx_buff_user = rx_buffer_1,
+    .p_rx_buff_reception = rx_buffer_2,
+    .new_data_sz = 0
+};
+
+VEDIRECT_RX_State rx_state = VEDIRECT_RX_State_IDLE;
 
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-
 /* USER CODE BEGIN PFP */
 uint8_t UART_Receive(void);
 void process_frame(void);
@@ -61,7 +71,29 @@ void reset_frame_data(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+extern UART_HandleTypeDef huart3;
 
+#ifdef __GNUC__
+/* With GCC/RAISONANCE, small printf (option LD Linker->Libraries->Small printf
+   set to 'Yes') calls __io_putchar() */
+#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+#else
+#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+#endif /* __GNUC__ */
+
+/**
+  * @brief  Retargets the C library printf function to the USART.
+  * @param  None
+  * @retval None
+  */
+PUTCHAR_PROTOTYPE
+{
+
+  SEGGER_RTT_printf(0, "%c", ch);
+
+
+  return ch;
+}
 
 /* USER CODE END 0 */
 
@@ -71,6 +103,7 @@ void reset_frame_data(void);
   */
 int main(void)
 {
+	setvbuf(stdout, NULL, _IONBF, 0);
 
   /* USER CODE BEGIN 1 */
 	int counter = 0;
@@ -95,20 +128,33 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_USART3_UART_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
- LL_USART_EnableIT_RXNE(USART3);
+
+  __HAL_UART_CLEAR_FLAG(&huart3, UART_FLAG_IDLE);
+  HAL_StatusTypeDef status = HAL_UARTEx_ReceiveToIdle_DMA(&huart3, protocol_rx_buff.p_rx_buff_reception, BUFFER_SIZE);
+ // __HAL_DMA_DISABLE_IT(huart3.hdmarx, DMA_IT_HT);
+  SEGGER_RTT_ConfigUpBuffer  (0,  NULL  ,  NULL  , 0,  SEGGER_RTT_MODE_NO_BLOCK_SKIP  );
+  SEGGER_RTT_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  // Continuously check if a complete frame is ready for processing
-	  process_frame();
+	  if(vedirect_rx_get_state() == VEDIRECT_RX_State_DATA_READY){
+
+		  //calculate checksum of the whole frame
+		  calculate_checksum(protocol_rx_buff.p_rx_buff_user, protocol_rx_buff.new_data_sz);
 
 
+		  HAL_StatusTypeDef check = HAL_UARTEx_ReceiveToIdle_DMA(&huart3, protocol_rx_buff.p_rx_buff_reception, BUFFER_SIZE);
+		  if (check != HAL_OK) Error_Handler();
+		  __HAL_UART_CLEAR_FLAG(&huart3, UART_FLAG_IDLE);
+		  vedirect_rx_set_state(VEDIRECT_RX_State_RECEIVING);
+	  }
 
     /* USER CODE END WHILE */
 
@@ -161,12 +207,54 @@ void SystemClock_Config(void)
 
 void process_frame(void)
 {
+	  if (frame_ready)
+	  {
+		// Process the received data
+		for (uint16_t i = 0; i < frame_size; i++)
+		{
+			char received_char = uart_buffer[i];
+
+			checksum_calculated = (checksum_calculated + (uint8_t)received_char);
+
+			if (!is_checksum_received)
+			{
+				// Check for the "Checksum\t" field in the buffer
+				if (strstr((char*)uart_buffer, "Checksum\t") != NULL)
+				{
+					is_checksum_received = 1;  // Found the checksum marker
+				}
+			}
+			else
+			{
+				// The next character is the actual checksum
+				checksum_received = (uint8_t)received_char;
+
+				checksum_received = uart_buffer[frame_size];
+
+				// Verify the checksum
+				checksum_calculated = (checksum_calculated + (uint8_t)received_char) % 256;
+
+				// Mark the frame as ready for processing
+				frame_ready = 1;
+
+				// Copy the local buffer to the global buffer for further processing
+				memcpy(g_uart_buffer, uart_buffer, uart_index);
+
+				// Reset the local buffer and variables for the next frame
+				uart_index = 0;
+				memset(uart_buffer, 0, BUFFER_SIZE);
+				is_checksum_received = 0;
+			}
+		}
+	  }
+
+
     if (frame_ready)
     {
         // Check if the calculated checksum matches the received checksum
         if ((checksum_calculated % 256) == checksum_received)
         {
-        	parse_frame(g_uart_buffer);
+        	//parse_frame(g_uart_buffer);
 
             HAL_UART_Transmit(&huart2, g_uart_buffer, uart_index, 1000);
         }

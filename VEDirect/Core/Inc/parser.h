@@ -20,6 +20,9 @@ typedef struct {
 // Declare ve_data as extern so it can be accessed globally
 extern vedirect_data_t ve_data;
 
+extern volatile uint8_t checksum_calculated;
+
 void parse_frame();
+void calculate_checksum(char *frame, uint16_t size);
 
 #endif // PARSER_H

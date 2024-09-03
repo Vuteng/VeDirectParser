@@ -2,24 +2,63 @@
 #include <uart_handler.h>
 #include <stm32g0xx_it.h>
 #include "stm32g0xx_ll_usart.h"  // Low Layer USART header for STM32G0 series
-
+#include <stdio.h>
 #define BUFFER_SIZE 512  // Large enough to accommodate more frames
 
 volatile char uart_buffer[BUFFER_SIZE];  // Buffer to store received data
 volatile uint8_t uart_index = 0;            // Index for next character
 volatile uint8_t frame_ready = 0;            // Flag indicating frame completion
-volatile uint8_t frame_number = 0;          // Frame counter
-volatile uint8_t checksum_calculated = 0;
+volatile uint8_t frame_size = 0;          // Frame counter
+
 volatile uint8_t checksum_received = 0;      
 volatile uint8_t checksum_index = 0;
 volatile char g_uart_buffer[BUFFER_SIZE];
 volatile uint8_t is_checksum_received = 0;
 
+extern UART_HandleTypeDef huart3;
+
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
+{
+    if (huart == &huart3)
+    {
+    	 // Swap the buffers so the main loop can access the received data
+        volatile uint8_t *p_tmp = protocol_rx_buff.p_rx_buff_user;
+        protocol_rx_buff.p_rx_buff_user = protocol_rx_buff.p_rx_buff_reception;
+        protocol_rx_buff.p_rx_buff_reception = p_tmp;
+
+        protocol_rx_buff.new_data_sz = Size;
+
+        printf("%s\n", (char *)protocol_rx_buff.p_rx_buff_reception);
+        
+        vedirect_rx_upd_rx_timestamp();
+        vedirect_rx_set_state(VEDIRECT_RX_State_DATA_READY);
+    }
+}
+
+// DMA Transfer Complete callback
+void
+HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+    if (huart == &huart3)
+    {
+        // This can be used to handle data if full buffer is filled
+        // For example, reset DMA here if necessary
+
+        // Reset the DMA for next reception
+        __HAL_DMA_DISABLE(huart->hdmarx); // Disable the DMA stream
+        memset(uart_buffer, 0, BUFFER_SIZE);
+        HAL_UARTEx_ReceiveToIdle_DMA(huart, protocol_rx_buff.p_rx_buff_reception, BUFFER_SIZE);
+    }
+}
+
+
 void UART_IRQ_HANDLER(void)
 {
+    #if 0
     if (LL_USART_IsActiveFlag_RXNE(USART3))
     {
         char received_char = LL_USART_ReceiveData8(USART3);
+
 
 
         if (uart_index < BUFFER_SIZE - 1)
@@ -72,5 +111,25 @@ void UART_IRQ_HANDLER(void)
     {
         LL_USART_ClearFlag_ORE(USART3);  // Clear overrun error flag
     }
+    #endif
 
+}
+
+// Function to set the state
+void vedirect_rx_set_state(VEDIRECT_RX_State new_state)
+{
+    rx_state = new_state;
+}
+
+// Function to get the current state
+VEDIRECT_RX_State vedirect_rx_get_state(void)
+{
+    return rx_state;
+}
+
+// Function to update the timestamp (dummy function for example)
+void vedirect_rx_upd_rx_timestamp(void)
+{
+    // Implement timestamp update logic if needed
+    // For now, it's just a placeholder function
 }
