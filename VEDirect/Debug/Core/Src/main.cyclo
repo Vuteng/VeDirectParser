@@ -1,6 +1,4 @@
-../Core/Src/main.c:89:1:__io_putchar	1
-../Core/Src/main.c:104:5:main	3
-../Core/Src/main.c:170:6:SystemClock_Config	3
-../Core/Src/main.c:208:6:process_frame	7
-../Core/Src/main.c:272:6:reset_frame_data	1
-../Core/Src/main.c:289:6:Error_Handler	1
+../Core/Src/main.c:91:1:__io_putchar	1
+../Core/Src/main.c:106:5:main	4
+../Core/Src/main.c:186:6:SystemClock_Config	3
+../Core/Src/main.c:232:6:Error_Handler	1

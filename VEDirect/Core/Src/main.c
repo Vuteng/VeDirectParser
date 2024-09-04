@@ -51,6 +51,8 @@
 uint8_t rx_buffer_1[BUFFER_SIZE];
 uint8_t rx_buffer_2[BUFFER_SIZE];
 
+volatile uint8_t checksum;
+
 ProtocolRxBuff protocol_rx_buff = {
     .p_rx_buff_user = rx_buffer_1,
     .p_rx_buff_reception = rx_buffer_2,
@@ -58,7 +60,7 @@ ProtocolRxBuff protocol_rx_buff = {
 };
 
 VEDIRECT_RX_State rx_state = VEDIRECT_RX_State_IDLE;
-
+DATA_STATE data_state = CHECKSUM_FAIL;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -106,7 +108,7 @@ int main(void)
 	setvbuf(stdout, NULL, _IONBF, 0);
 
   /* USER CODE BEGIN 1 */
-	int counter = 0;
+	checksum = 0;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -147,12 +149,26 @@ int main(void)
 	  if(vedirect_rx_get_state() == VEDIRECT_RX_State_DATA_READY){
 
 		  //calculate checksum of the whole frame
-		  calculate_checksum(protocol_rx_buff.p_rx_buff_user, protocol_rx_buff.new_data_sz);
+		  checksum = calculate_checksum(protocol_rx_buff.p_rx_buff_user, protocol_rx_buff.new_data_sz);
+
+		  if(checksum == 0){
+			  data_set_state(CHECKSUM_OK);
+			  parse_frame(protocol_rx_buff.p_rx_buff_user);
+			  printf("parsed: %s %s\n", ve_data.fields[2].label,ve_data.fields[2].value);
+		  }
+		  else
+			  data_set_state(CHECKSUM_FAIL);
+
+		  //TODO: ADD LOGGER FOL FAIL CHECKSUM
 
 
 		  HAL_StatusTypeDef check = HAL_UARTEx_ReceiveToIdle_DMA(&huart3, protocol_rx_buff.p_rx_buff_reception, BUFFER_SIZE);
+
+
 		  if (check != HAL_OK) Error_Handler();
 		  __HAL_UART_CLEAR_FLAG(&huart3, UART_FLAG_IDLE);
+
+
 		  vedirect_rx_set_state(VEDIRECT_RX_State_RECEIVING);
 	  }
 
@@ -205,80 +221,7 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
-void process_frame(void)
-{
-	  if (frame_ready)
-	  {
-		// Process the received data
-		for (uint16_t i = 0; i < frame_size; i++)
-		{
-			char received_char = uart_buffer[i];
 
-			checksum_calculated = (checksum_calculated + (uint8_t)received_char);
-
-			if (!is_checksum_received)
-			{
-				// Check for the "Checksum\t" field in the buffer
-				if (strstr((char*)uart_buffer, "Checksum\t") != NULL)
-				{
-					is_checksum_received = 1;  // Found the checksum marker
-				}
-			}
-			else
-			{
-				// The next character is the actual checksum
-				checksum_received = (uint8_t)received_char;
-
-				checksum_received = uart_buffer[frame_size];
-
-				// Verify the checksum
-				checksum_calculated = (checksum_calculated + (uint8_t)received_char) % 256;
-
-				// Mark the frame as ready for processing
-				frame_ready = 1;
-
-				// Copy the local buffer to the global buffer for further processing
-				memcpy(g_uart_buffer, uart_buffer, uart_index);
-
-				// Reset the local buffer and variables for the next frame
-				uart_index = 0;
-				memset(uart_buffer, 0, BUFFER_SIZE);
-				is_checksum_received = 0;
-			}
-		}
-	  }
-
-
-    if (frame_ready)
-    {
-        // Check if the calculated checksum matches the received checksum
-        if ((checksum_calculated % 256) == checksum_received)
-        {
-        	//parse_frame(g_uart_buffer);
-
-            HAL_UART_Transmit(&huart2, g_uart_buffer, uart_index, 1000);
-        }
-        else
-        {
-            // Invalid checksum
-            HAL_UART_Transmit(&huart2, (uint8_t *)"Checksum Error\n", 15, 1000);
-        }
-
-        // Clear buffers and reset flags
-        reset_frame_data();
-    }
-}
-
-void reset_frame_data(void)
-{
-    // Clear the UART buffer
-    memset(g_uart_buffer, 0, BUFFER_SIZE);
-
-    // Reset flags
-    frame_ready = 0;
-    checksum_calculated = 0;
-    uart_index = 0;
-}
 
 /* USER CODE END 4 */
 
