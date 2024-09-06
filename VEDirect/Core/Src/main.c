@@ -154,7 +154,7 @@ int main(void)
 		  if(checksum == 0){
 			  data_set_state(CHECKSUM_OK);
 			  parse_frame(protocol_rx_buff.p_rx_buff_user);
-			  printf("parsed: %s %s\n", ve_data.fields[2].label,ve_data.fields[2].value);
+			  printf("parsed: %s %s\n", ve_data.fields[0].label,ve_data.fields[0].value);
 		  }
 		  else
 			  data_set_state(CHECKSUM_FAIL);

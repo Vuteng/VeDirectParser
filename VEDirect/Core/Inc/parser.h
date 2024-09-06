@@ -12,9 +12,23 @@ typedef enum {
 	CHECKSUM_FAIL,
 } DATA_STATE;
 
+typedef enum {
+    VOLTAGE, //values in voltage; mV
+    CURRENT, //values in amperes, mA
+    POWER, //values in watts, W
+    TEMPERATURE, //degree Celsius
+    CURRENT_ENERGY, //mAh
+    PERCENTAGE, 
+    TIME,
+    POWER_ENERGY //kWh
+} DATA_TYPE;
+
+
 typedef struct {
     char label[LABEL_SIZE]; // Field label
     char value[VALUE_SIZE]; // Field value
+    DATA_TYPE data_type; //type of value
+    uint16_t number; //value in number
 } vedirect_field_t;
 
 typedef struct {
@@ -25,6 +39,7 @@ typedef struct {
 // Declare as extern so it can be accessed globally
 extern vedirect_data_t ve_data;
 extern DATA_STATE data_state;
+extern DATA_TYPE data_type;
 
 extern char *LATEST_PID;
 

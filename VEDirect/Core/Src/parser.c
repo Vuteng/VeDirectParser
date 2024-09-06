@@ -64,3 +64,7 @@ void parse_frame(char *frame)
 		line_start = line_end + 2;
 	}
 }
+
+void ve_data_data_type(){
+	
+}
