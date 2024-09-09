@@ -155,11 +155,15 @@ int main(void)
 			  data_set_state(CHECKSUM_OK);
 			  parse_frame(protocol_rx_buff.p_rx_buff_user);
 			  printf("parsed: %s %s\n", ve_data.fields[0].label,ve_data.fields[0].value);
+
+			 // Map parsed fields to the structure
+			map_fields_to_structure(&ve_data, &ve_direct_data);
+
 		  }
 		  else
 			  data_set_state(CHECKSUM_FAIL);
 
-		  //TODO: ADD LOGGER FOL FAIL CHECKSUM
+		  //TODO: ADD LOGGER
 
 
 		  HAL_StatusTypeDef check = HAL_UARTEx_ReceiveToIdle_DMA(&huart3, protocol_rx_buff.p_rx_buff_reception, BUFFER_SIZE);

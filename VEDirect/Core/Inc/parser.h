@@ -13,7 +13,7 @@ typedef enum {
 } DATA_STATE;
 
 typedef enum {
-    VOLTAGE, //values in voltage; mV
+    VOLTAGE, //values in voltage, mV
     CURRENT, //values in amperes, mA
     POWER, //values in watts, W
     TEMPERATURE, //degree Celsius
@@ -25,8 +25,8 @@ typedef enum {
 
 
 typedef struct {
-    char label[LABEL_SIZE]; // Field label
-    char value[VALUE_SIZE]; // Field value
+    char label[LABEL_SIZE];
+    char value[VALUE_SIZE];
     DATA_TYPE data_type; //type of value
     uint16_t number; //value in number
 } vedirect_field_t;
@@ -36,7 +36,7 @@ typedef struct {
     uint8_t field_count;    // Number of fields currently stored
 } vedirect_data_t;
 
-// Declare as extern so it can be accessed globally
+
 extern vedirect_data_t ve_data;
 extern DATA_STATE data_state;
 extern DATA_TYPE data_type;

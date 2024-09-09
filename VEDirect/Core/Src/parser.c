@@ -48,7 +48,7 @@ void parse_frame(char *frame)
 			*tab_pos = '\0'; // to know where it ends
 
 		char *label = line_start;
-		char *value = tab_pos + 1; //+1 to skip tab;
+		char *value = tab_pos + 1; //+1 to skip tab
 
 		if (ve_data.field_count < MAX_FIELDS) {
 			strncpy(ve_data.fields[ve_data.field_count].label, label, LABEL_SIZE - 1);

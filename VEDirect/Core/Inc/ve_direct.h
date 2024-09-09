@@ -6,81 +6,80 @@ typedef uint8_t ve_direct_data_string_t[VE_DIRECT_DATA_ARR_MAX_SIZE];
 /// Ko to naredis poklici da pogledamo
 
 typedef enum {
-    ERR_NO_ERROR                         = 0,
-    ERR_BATTERY_VOLTAGE_TOO_HIGH          = 2,
-    ERR_CHARGER_TEMPERATURE_TOO_HIGH      = 17,
-    ERR_CHARGER_OVER_CURRENT              = 18,
-    ERR_CHARGER_CURRENT_REVERSED          = 19,
-    ERR_BULK_TIME_LIMIT_EXCEEDED          = 20,
-    ERR_CURRENT_SENSOR_ISSUE              = 21,
-    ERR_TERMINALS_OVERHEATED              = 26,
-    ERR_CONVERTER_ISSUE                   = 28,
-    ERR_INPUT_VOLTAGE_TOO_HIGH            = 33,
-    ERR_INPUT_CURRENT_TOO_HIGH            = 34,
-    ERR_INPUT_SHUTDOWN_VOLTAGE            = 38,
-    ERR_INPUT_SHUTDOWN_CURRENT            = 39,
-    ERR_LOST_COMMUNICATION                = 65,
-    ERR_SYNC_DEVICE_CONFIGURATION_ISSUE   = 66,
-    ERR_BMS_CONNECTION_LOST               = 67,
-    ERR_NETWORK_MISCONFIGURED             = 68,
-    ERR_FACTORY_CALIBRATION_DATA_LOST     = 116,
-    ERR_INVALID_FIRMWARE                  = 117,
-    ERR_USER_SETTINGS_INVALID             = 119
+    VE_DIRECT_ERR_NO_ERROR                          = 0,
+    VE_DIRECT_ERR_BATTERY_VOLTAGE_TOO_HIGH          = 2,
+    VE_DIRECT_ERR_CHARGER_TEMPERATURE_TOO_HIGH      = 17,
+    VE_DIRECT_ERR_CHARGER_OVER_CURRENT              = 18,
+    VE_DIRECT_ERR_CHARGER_CURRENT_REVERSED          = 19,
+    VE_DIRECT_ERR_BULK_TIME_LIMIT_EXCEEDED          = 20,
+    VE_DIRECT_ERR_CURRENT_SENSOR_ISSUE              = 21,
+    VE_DIRECT_ERR_TERMINALS_OVERHEATED              = 26,
+    VE_DIRECT_ERR_CONVERTER_ISSUE                   = 28,
+    VE_DIRECT_ERR_INPUT_VOLTAGE_TOO_HIGH            = 33,
+    VE_DIRECT_ERR_INPUT_CURRENT_TOO_HIGH            = 34,
+    VE_DIRECT_ERR_INPUT_SHUTDOWN_BATTERY_VOLTAGE    = 38,
+    VE_DIRECT_ERR_INPUT_SHUTDOWN_CURRENT_FLOW       = 39,
+    VE_DIRECT_ERR_LOST_COMMUNICATION                = 65,
+    VE_DIRECT_ERR_SYNC_CHARGING_DEVICE_CONFIG       = 66,
+    VE_DIRECT_ERR_BMS_CONNECTION_LOST               = 67,
+    VE_DIRECT_ERR_NETWORK_MISCONFIGURED             = 68,
+    VE_DIRECT_ERR_FACTORY_CALIBRATION_DATA_LOST     = 116,
+    VE_DIRECT_ERR_INVALID_INCOMPATIBLE_FIRMWARE     = 117,
+    VE_DIRECT_ERR_USER_SETTINGS_INVALID             = 119
 } ve_direct_err_t;
 
 typedef enum {
-    CS_OFF                              = 0,
-    CS_LOW_POWER                        = 1,
-    CS_FAULT                            = 2,
-    CS_BULK                             = 3,
-    CS_ABSORPTION                       = 4,
-    CS_FLOAT                            = 5,
-    CS_STORAGE                          = 6,
-    CS_EQUALIZE_MANUAL                  = 7,
-    CS_INVERTING                        = 9,
-    CS_POWER_SUPPLY                     = 11,
-    CS_STARTING_UP                      = 245,
-    CS_REPEATED_ABSORPTION              = 246,
-    CS_AUTO_EQUALIZE_RECONDITION        = 247,
-    CS_BATTERY_SAFE                     = 248,
-    CS_EXTERNAL_CONTROL                 = 252
+    VE_DIRECT_CS_OFF                = 0,
+    VE_DIRECT_CS_LOW_POWER          = 1,
+    VE_DIRECT_CS_FAULT              = 2,
+    VE_DIRECT_CS_BULK               = 3,
+    VE_DIRECT_CS_ABSORPTION         = 4,
+    VE_DIRECT_CS_FLOAT              = 5,
+    VE_DIRECT_CS_STORAGE            = 6,
+    VE_DIRECT_CS_EQUALIZE_MANUAL    = 7,
+    VE_DIRECT_CS_INVERTING          = 9,
+    VE_DIRECT_CS_POWER_SUPPLY       = 11,
+    VE_DIRECT_CS_STARTING_UP        = 245,
+    VE_DIRECT_CS_REPEATED_ABSORPTION= 246,
+    VE_DIRECT_CS_AUTO_EQUALIZE      = 247,
+    VE_DIRECT_CS_BATTERYSAVE        = 248,
+    VE_DIRECT_CS_EXTERNAL_CONTROL   = 252
 } ve_direct_cs_t;
 
 typedef enum {
-    VE_REG_MODE_CHARGER     = 1,
-    VE_REG_MODE_INVERTER    = 2,
-    VE_REG_MODE_OFF         = 4,
-    VE_REG_MODE_ECO         = 5,
-    VE_REG_MODE_HIBERNATE   = 253
+    VE_DIRECT_MODE_CHARGER          = 1,
+    VE_DIRECT_MODE_INVERTER         = 2,
+    VE_DIRECT_MODE_OFF              = 4,
+    VE_DIRECT_MODE_ECO              = 5,
+    VE_DIRECT_MODE_HIBERNATE        = 253
 } ve_direct_mode_t;
 
 typedef enum {
-    MPPT_OFF                = 0,
-    MPPT_VOLTAGE_LIMITED     = 1,
-    MPPT_TRACKER_ACTIVE      = 2
+    VE_DIRECT_MPPT_OFF              = 0,
+    VE_DIRECT_MPPT_VOLTAGE_LIMITED  = 1,
+    VE_DIRECT_MPPT_TRACKER_ACTIVE   = 2
 } ve_direct_mppt_t;
 
 typedef enum {
-    MON_SOLAR_CHARGER        = -9,
-    MON_WIND_TURBINE         = -8,
-    MON_SHAFT_GENERATOR      = -7,
-    MON_ALTERNATOR           = -6,
-    MON_FUEL_CELL            = -5,
-    MON_WATER_GENERATOR      = -4,
-    MON_DC_DC_CHARGER        = -3,
-    MON_AC_CHARGER           = -2,
-    MON_GENERIC_SOURCE       = -1,
-    MON_BATTERY_MONITOR      = 0, 
-    MON_GENERIC_LOAD         = 1,
-    MON_ELECTRIC_DRIVE       = 2,
-    MON_FRIDGE               = 3,
-    MON_WATER_PUMP           = 4,
-    MON_BILGE_PUMP           = 5,
-    MON_DC_SYSTEM            = 6,
-    MON_INVERTER             = 7,
-    MON_WATER_HEATER         = 8
+    VE_DIRECT_MON_SOLAR_CHARGER     = -9,
+    VE_DIRECT_MON_WIND_TURBINE      = -8,
+    VE_DIRECT_MON_SHAFT_GENERATOR   = -7,
+    VE_DIRECT_MON_ALTERNATOR        = -6,
+    VE_DIRECT_MON_FUEL_CELL         = -5,
+    VE_DIRECT_MON_WATER_GENERATOR   = -4,
+    VE_DIRECT_MON_DC_DC_CHARGER     = -3,
+    VE_DIRECT_MON_AC_CHARGER        = -2,
+    VE_DIRECT_MON_GENERIC_SOURCE    = -1,
+    VE_DIRECT_MON_BATTERY_MONITOR   = 0,  // BMV
+    VE_DIRECT_MON_GENERIC_LOAD      = 1,
+    VE_DIRECT_MON_ELECTRIC_DRIVE    = 2,
+    VE_DIRECT_MON_FRIDGE            = 3,
+    VE_DIRECT_MON_WATER_PUMP        = 4,
+    VE_DIRECT_MON_BILGE_PUMP        = 5,
+    VE_DIRECT_MON_DC_SYSTEM         = 6,
+    VE_DIRECT_MON_INVERTER          = 7,
+    VE_DIRECT_MON_WATER_HEATER      = 8
 } ve_direct_mon_t;
-
 typedef enum
 {
     VE_DIRECT_STATUS_ACTIVE     = 0,
