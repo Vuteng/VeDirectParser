@@ -27,6 +27,7 @@
 #include <uart_handler.h>
 #include <parser.h>
 #include <stdio.h>
+#include <ve_direct.h>
 #include "SEGGER_RTT.h"
 /* USER CODE END Includes */
 
@@ -50,7 +51,7 @@
 /* USER CODE BEGIN PV */
 uint8_t rx_buffer_1[BUFFER_SIZE];
 uint8_t rx_buffer_2[BUFFER_SIZE];
-
+extern ve_direct_data_t g_ve_direct_channels[VE_DIRECT_CH_MAX];
 volatile uint8_t checksum;
 
 ProtocolRxBuff protocol_rx_buff = {
@@ -157,7 +158,7 @@ int main(void)
 			  printf("parsed: %s %s\n", ve_data.fields[0].label,ve_data.fields[0].value);
 
 			 // Map parsed fields to the structure
-			map_fields_to_structure(&ve_data, &ve_direct_data);
+			map_fields_to_structure(ve_data, &g_ve_direct_channels);
 
 		  }
 		  else

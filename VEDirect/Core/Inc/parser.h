@@ -27,8 +27,6 @@ typedef enum {
 typedef struct {
     char label[LABEL_SIZE];
     char value[VALUE_SIZE];
-    DATA_TYPE data_type; //type of value
-    uint16_t number; //value in number
 } vedirect_field_t;
 
 typedef struct {

@@ -326,4 +326,4 @@ typedef struct
     } label;
 } ve_direct_data_t;
 
-ve_direct_data_t g_ve_direct_channels[VE_DIRECT_CH_MAX];
+
