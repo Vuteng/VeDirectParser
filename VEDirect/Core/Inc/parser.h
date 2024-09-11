@@ -25,8 +25,8 @@ typedef enum {
 
 
 typedef struct {
-    char label[LABEL_SIZE];
-    char value[VALUE_SIZE];
+    char *label;
+    char *value;
 } vedirect_field_t;
 
 typedef struct {

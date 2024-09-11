@@ -31,38 +31,38 @@ uint8_t calculate_checksum(char *frame, uint16_t size)
 }
 
 //parses the whole string frame to array of structs
-void parse_frame(char *frame)
-{
-	ve_data.field_count = 0; // Reset field count
+void parse_frame(const char *input, vedirect_field_t fields[]) {
+    const char *start = input;  // Pointer to start of the string
+    const char *end = input + strlen(input);  // Pointer to the end of the string
+    int count = 0;  // Counter for fields
 
-	char *line_start = frame;
-	char *line_end;
+    while (start < end) {
+        // Find the position of the next \r\n (end of label-value pair)
+        const char *line_end = strstr(start, "\r\n");
+        if (!line_end) {
+            break;  // No more lines
+        }
 
-	//seperates string into new lines based on \r\n
-	while ((line_end = strstr(line_start, "\r\n")) != NULL) {
-		*line_end = '\0'; // to know where it ends
+        // Find the position of the \t (delimiter between label and value)
+        const char *tab = strchr(start, '\t');
+        if (tab && tab < line_end) {
+            fields[count].label = (char *)start;       // Point to the start of the label
+            fields[count].value = (char *)(tab + 1);   // Point to the start of the value
 
-		// process data line by line
-		char *tab_pos = strstr(line_start, "\t");
-		if (tab_pos != NULL) {
-			*tab_pos = '\0'; // to know where it ends
+            // Null terminate the label and value temporarily for printing or further processing
+            *((char *)tab) = '\0';            // Null terminate the label
+            *((char *)line_end) = '\0';       // Null terminate the value
 
-		char *label = line_start;
-		char *value = tab_pos + 1; //+1 to skip tab
+            count++;
+        }
 
-		if (ve_data.field_count < MAX_FIELDS) {
-			strncpy(ve_data.fields[ve_data.field_count].label, label, LABEL_SIZE - 1);
-			ve_data.fields[ve_data.field_count].label[LABEL_SIZE - 1] = '\0';
+        // Move the start pointer to the next line
+        start = line_end + 2;  // Skip \r\n
+    }
 
-			strncpy(ve_data.fields[ve_data.field_count].value, value, VALUE_SIZE - 1);
-			ve_data.fields[ve_data.field_count].value[VALUE_SIZE - 1] = '\0';
-
-			ve_data.field_count++;
-			}
-		}
-
-		line_start = line_end + 2;
-	}
+    // Add a sentinel NULL at the end to mark the end of the array
+    fields[count].label = NULL;
+    fields[count].value = NULL;
 }
 
 void ve_data_data_type(){

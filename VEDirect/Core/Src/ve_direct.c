@@ -49,7 +49,8 @@ ve_direct_data_base_type_t convert_to_uint32(const char *str) {
         MAP_FIELD(H21, struct_ptr, value)              \
         MAP_FIELD(H22, struct_ptr, value)              \
         MAP_FIELD(H23, struct_ptr, value)              \
-        MAP_FIELD(ERR, struct_ptr, value)              \
+		MAP_FIELD(ERR, struct_ptr, value)              \
+		MAP_FIELD(PID, struct_ptr, value)              \
         MAP_FIELD(CS, struct_ptr, value)               \
         MAP_FIELD(FW, struct_ptr, value)               \
         MAP_FIELD(FWE, struct_ptr, value)              \
@@ -67,12 +68,13 @@ ve_direct_data_base_type_t convert_to_uint32(const char *str) {
         /* Add other fields as needed */               \
     } while (0)
 
+//int parse(ve_direct_data_t * pStruct, uint32_t label, )
 
 // Function to map fields into the structure using macros
 void map_fields_to_structure(vedirect_data_t ve_data, ve_direct_data_t ve_direct_data) {
     for (int i = 0; i < ve_data.field_count; i++) {
         const char *label = ve_data.fields[i].label;
         const char *value = ve_data.fields[i].value;
-        PARSE_FIELD(ve_direct_data.label, label, value);
+        PARSE_FIELD(ve_direct_data.label, "V", value);
     }
 }
