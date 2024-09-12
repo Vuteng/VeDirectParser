@@ -25,7 +25,6 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <uart_handler.h>
-#include <parser.h>
 #include <stdio.h>
 #include <ve_direct.h>
 #include "SEGGER_RTT.h"
@@ -51,7 +50,7 @@
 /* USER CODE BEGIN PV */
 uint8_t rx_buffer_1[BUFFER_SIZE];
 uint8_t rx_buffer_2[BUFFER_SIZE];
-char test_buffer[BUFFER_SIZE] = "\r\nPID\t0xA389\r\nV\t11980\r\nVS\t-13\r\nI\t0\r\nP\t0\r\nCE\t0\r\nSOC\t1000\r\nTTG\t-1\r\nAlarm\tOFF\r\nAR\t0\r\nBMV\tSmartShunt 500A/50mV\r\nFW\t0404\r\nChecksum\tQ";
+char test_buffer[BUFFER_SIZE] = "\r\nPID\t0xA389\r\nV\t11980\r\nVS\t-13\r\nI\t0\r\nP\t0\r\nCE\t0\r\nSOC\t1000\r\nTTG\t-1\r\nAlarm\tOFF\r\nAR\t0\r\nBMV\tSmartShunt 500A/50mV\r\nFW\t0404\r\nERR\t17\r\nH2\t0\r\nH3\t0\r\nH4\t0\r\nH5\t0\r\nH6\t0\r\nH7\t11974\r\nH8\t14109\r\nH9\t0\r\nH10\t0\r\nH11\t0\r\nH12\t0\r\nH15\t-18\r\nH16\t0\r\nH17\t0\r\nERR\t17\r\n\r\nChecksum\tQ";
 extern ve_direct_data_t g_ve_direct_channels[VE_DIRECT_CH_MAX];
 volatile uint8_t checksum;
 
@@ -136,9 +135,6 @@ int main(void)
   MX_USART3_UART_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  //test_buffer = "\r\nPID\t0xA389\r\nV\t11980\r\nVS\t-13\r\nI\t0\r\nP\t0\r\nCE\t0\r\nSOC\t1000\r\nTTG\t-1\r\nAlarm\tOFF\r\nAR\t0\r\nBMV\tSmartShunt 500A/50mV\r\nFW\t0404\r\nChecksum\tQ"
-
-
   __HAL_UART_CLEAR_FLAG(&huart3, UART_FLAG_IDLE);
   HAL_StatusTypeDef status = HAL_UARTEx_ReceiveToIdle_DMA(&huart3, protocol_rx_buff.p_rx_buff_reception, BUFFER_SIZE);
  // __HAL_DMA_DISABLE_IT(huart3.hdmarx, DMA_IT_HT);
@@ -150,26 +146,19 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-		parse_frame(test_buffer);
-				  printf("parsed: %s %s\n", ve_data.fields[0].label,ve_data.fields[0].value);
 
-				 // Map parsed fields to the structure
-				map_fields_to_structure(ve_data, &g_ve_direct_channels);
-	  /*
 	  if(vedirect_rx_get_state() == VEDIRECT_RX_State_DATA_READY){
 
 		  //calculate checksum of the whole frame
 		  checksum = calculate_checksum(protocol_rx_buff.p_rx_buff_user, protocol_rx_buff.new_data_sz);
 
 		  if(checksum == 0){
-			  data_set_state(CHECKSUM_OK);
-			  //parse_frame(protocol_rx_buff.p_rx_buff_user);
-				//DEBUG
-				parse_frame(test_buffer);
-			  printf("parsed: %s %s\n", ve_data.fields[0].label,ve_data.fields[0].value);
+				data_set_state(CHECKSUM_OK);
 
-			 // Map parsed fields to the structure
-			map_fields_to_structure(ve_data, &g_ve_direct_channels);
+				parse_frame(protocol_rx_buff.p_rx_buff_user); //seperates frame into seperate fields
+
+				// Map parsed fields to the structure
+				parse_vedirect_data(&ve_data, &g_ve_direct_channels);
 
 		  }
 		  else
@@ -178,15 +167,15 @@ int main(void)
 		  //TODO: ADD LOGGER
 
 
-		  HAL_StatusTypeDef check = HAL_UARTEx_ReceiveToIdle_DMA(&huart3, protocol_rx_buff.p_rx_buff_reception, BUFFER_SIZE);
+		  /*HAL_StatusTypeDef check = HAL_UARTEx_ReceiveToIdle_DMA(&huart3, protocol_rx_buff.p_rx_buff_reception, BUFFER_SIZE);
 
 
 		  if (check != HAL_OK) Error_Handler();
 		  __HAL_UART_CLEAR_FLAG(&huart3, UART_FLAG_IDLE);
 
 
-		  vedirect_rx_set_state(VEDIRECT_RX_State_RECEIVING);
-	  }*/
+		  vedirect_rx_set_state(VEDIRECT_RX_State_RECEIVING);*/
+	  }
 
     /* USER CODE END WHILE */
 

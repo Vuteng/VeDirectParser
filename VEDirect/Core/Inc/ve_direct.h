@@ -1,9 +1,31 @@
+#include <stdint.h>
+
 #define VE_DIRECT_DATA_ARR_MAX_SIZE 33U
+#define MAX_FIELDS 22       // Maximum number of fields in a block
+#define LABEL_SIZE 9        // Buffer size for field label (8 characters + null terminator)
+#define VALUE_SIZE 33       // Buffer size for field value (32 characters + null terminator)
 
 typedef uint8_t ve_direct_data_string_t[VE_DIRECT_DATA_ARR_MAX_SIZE];
 
-/// Note; NEJC: Naredi enume kot vidis tukaj, za CS, ERR, MODE labele itn... potem zamenjaj tip v tabeli z tem enumom
-/// Ko to naredis poklici da pogledamo
+
+
+
+
+typedef enum {
+    CHECKSUM_OK,
+	CHECKSUM_FAIL,
+} DATA_STATE;
+
+typedef struct {
+	 char label[LABEL_SIZE];
+	 char value[VALUE_SIZE];
+} field_t;
+
+typedef struct {
+    field_t fields[MAX_FIELDS];
+    uint8_t field_count;    // Number of fields currently stored
+} data_t;
+
 
 typedef enum {
     VE_DIRECT_ERR_NO_ERROR                          = 0,
@@ -94,7 +116,7 @@ typedef enum
     VE_DIRECT_CH_MAX = 3,
 } ve_direct_channels_t;
 
-typedef uint32_t ve_direct_data_base_type_t;
+typedef int32_t ve_direct_data_base_type_t;
 
 typedef enum
 {
@@ -326,4 +348,13 @@ typedef struct
     } label;
 } ve_direct_data_t;
 
+extern data_t ve_data;
+extern DATA_STATE data_state;
 
+extern char *LATEST_PID;
+
+void parse_frame();
+void data_set_state(DATA_STATE new_state);
+DATA_STATE data_get_state(void);
+
+uint8_t calculate_checksum(char *frame, uint16_t size);
