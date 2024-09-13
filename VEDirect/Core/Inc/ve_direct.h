@@ -1,5 +1,6 @@
 #include <stdint.h>
 
+
 #define VE_DIRECT_DATA_ARR_MAX_SIZE 33U
 #define MAX_FIELDS 22       // Maximum number of fields in a block
 #define LABEL_SIZE 9        // Buffer size for field label (8 characters + null terminator)

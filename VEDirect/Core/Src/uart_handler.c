@@ -18,8 +18,6 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
         protocol_rx_buff.p_rx_buff_reception = p_tmp;
 
         protocol_rx_buff.new_data_sz = Size;
-
-        printf("%s\n", (char *)protocol_rx_buff.p_rx_buff_reception);
         
         vedirect_rx_upd_rx_timestamp();
         vedirect_rx_set_state(VEDIRECT_RX_State_DATA_READY);

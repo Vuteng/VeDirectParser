@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <ve_direct.h>
 #include <stdbool.h>
+#include "uart_handler.h"
 
 ve_direct_data_t g_ve_direct_channels[VE_DIRECT_CH_MAX];
 
@@ -207,4 +208,8 @@ void parse_frame(char *frame)
 		}
 		line_start = line_end + 2;
 	}
+}
+
+void process_frame(data_t *src, ve_direct_data_t *dest){
+    
 }

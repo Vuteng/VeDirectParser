@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "dma.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -50,7 +51,7 @@
 /* USER CODE BEGIN PV */
 uint8_t rx_buffer_1[BUFFER_SIZE];
 uint8_t rx_buffer_2[BUFFER_SIZE];
-char test_buffer[BUFFER_SIZE] = "\r\nPID\t0xA389\r\nV\t11980\r\nVS\t-13\r\nI\t0\r\nP\t0\r\nCE\t0\r\nSOC\t1000\r\nTTG\t-1\r\nAlarm\tOFF\r\nAR\t0\r\nBMV\tSmartShunt 500A/50mV\r\nFW\t0404\r\nERR\t17\r\nH2\t0\r\nH3\t0\r\nH4\t0\r\nH5\t0\r\nH6\t0\r\nH7\t11974\r\nH8\t14109\r\nH9\t0\r\nH10\t0\r\nH11\t0\r\nH12\t0\r\nH15\t-18\r\nH16\t0\r\nH17\t0\r\nERR\t17\r\n\r\nChecksum\tQ";
+char test_buffer[BUFFER_SIZE] = "\r\nPID\t0xA241\r\nFW\t0126\r\nSER#\tHQ2311PZ2NR\r\nMODE\t2\r\nCS\t9\r\nAC_OUT_V\t22998\r\nAC_OUT_I\t0\r\nAC_OUT_S\t8\r\nV\t11877\r\nAR\t0\r\nWARN\t0\r\nOR\t0x00000000\r\nChecksum\t\xF3";
 extern ve_direct_data_t g_ve_direct_channels[VE_DIRECT_CH_MAX];
 volatile uint8_t checksum;
 
@@ -97,6 +98,8 @@ PUTCHAR_PROTOTYPE
 
   return ch;
 }
+#include "tim.h"
+
 
 /* USER CODE END 0 */
 
@@ -106,10 +109,10 @@ PUTCHAR_PROTOTYPE
   */
 int main(void)
 {
-	setvbuf(stdout, NULL, _IONBF, 0);
 
   /* USER CODE BEGIN 1 */
 	checksum = 0;
+	  uint32_t start_time, end_time, elapsed_time;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -134,35 +137,53 @@ int main(void)
   MX_DMA_Init();
   MX_USART3_UART_Init();
   MX_USART2_UART_Init();
+  MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
   __HAL_UART_CLEAR_FLAG(&huart3, UART_FLAG_IDLE);
   HAL_StatusTypeDef status = HAL_UARTEx_ReceiveToIdle_DMA(&huart3, protocol_rx_buff.p_rx_buff_reception, BUFFER_SIZE);
  // __HAL_DMA_DISABLE_IT(huart3.hdmarx, DMA_IT_HT);
   SEGGER_RTT_ConfigUpBuffer  (0,  NULL  ,  NULL  , 0,  SEGGER_RTT_MODE_NO_BLOCK_SKIP  );
   SEGGER_RTT_Init();
+  HAL_TIM_Base_Start(&htim1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  /*start_time = __HAL_TIM_GET_COUNTER(&htim1);
+    parse_frame(test_buffer);
+    parse_vedirect_data(&ve_data, &g_ve_direct_channels);
+    end_time = __HAL_TIM_GET_COUNTER(&htim1);
+
+    int a = 0;
+    if (end_time >= start_time)
+    {
+        elapsed_time = end_time - start_time;
+    }
+    else
+    {
+        // Handle timer overflow if it occurs
+        elapsed_time = (0xFFFF - start_time) + end_time;
+    }
+
+    a++;*/
 
 	  if(vedirect_rx_get_state() == VEDIRECT_RX_State_DATA_READY){
 
-		  //calculate checksum of the whole frame
-		  checksum = calculate_checksum(protocol_rx_buff.p_rx_buff_user, protocol_rx_buff.new_data_sz);
+		 //calculate checksum of the whole frame
+    checksum = calculate_checksum(protocol_rx_buff.p_rx_buff_user, protocol_rx_buff.new_data_sz);
 
-		  if(checksum == 0){
-				data_set_state(CHECKSUM_OK);
+    if(checksum == 0){
+        data_set_state(CHECKSUM_OK);
 
-				parse_frame(protocol_rx_buff.p_rx_buff_user); //seperates frame into seperate fields
+    parse_frame(protocol_rx_buff.p_rx_buff_user); //seperates frame into seperate fields and correspondind values
 
-				// Map parsed fields to the structure
-				parse_vedirect_data(&ve_data, &g_ve_direct_channels);
+    // Map parsed fields to the structure
+    parse_vedirect_data(&ve_data, &g_ve_direct_channels);
 
-		  }
-		  else
-			  data_set_state(CHECKSUM_FAIL);
+    }else
+        data_set_state(CHECKSUM_FAIL);
 
 		  //TODO: ADD LOGGER
 
@@ -174,7 +195,7 @@ int main(void)
 		  __HAL_UART_CLEAR_FLAG(&huart3, UART_FLAG_IDLE);
 
 
-		  vedirect_rx_set_state(VEDIRECT_RX_State_RECEIVING);*/
+		  vedirect_rx_set_state(VEDIRECT_RX_State_RECEIVING);
 	  }
 
     /* USER CODE END WHILE */
