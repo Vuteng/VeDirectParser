@@ -15,7 +15,7 @@ typedef uint8_t ve_direct_data_string_t[VE_DIRECT_DATA_ARR_MAX_SIZE];
 typedef enum {
     CHECKSUM_OK,
 	CHECKSUM_FAIL,
-} DATA_STATE;
+} ve_direct_data_state_t;
 
 typedef struct {
 	 char label[LABEL_SIZE];
@@ -277,7 +277,7 @@ typedef enum
 typedef struct
 {
     ve_direct_status_t status;
-
+    ve_direct_data_state_t data_state;
     struct
     {
         ve_direct_data_base_type_t V;     // mV Main or channel 1 (battery) voltage
@@ -350,7 +350,7 @@ typedef struct
 } ve_direct_data_t;
 
 extern data_t ve_data;
-extern DATA_STATE data_state;
+extern ve_direct_data_state_t DATA_STATE data_state;
 
 extern char *LATEST_PID;
 

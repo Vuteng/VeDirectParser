@@ -62,7 +62,7 @@ ProtocolRxBuff protocol_rx_buff = {
 };
 
 VEDIRECT_RX_State rx_state = VEDIRECT_RX_State_IDLE;
-DATA_STATE data_state = CHECKSUM_FAIL;
+ve_direct_data_state_t data_state = CHECKSUM_FAIL;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
