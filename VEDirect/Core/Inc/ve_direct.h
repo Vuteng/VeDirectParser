@@ -350,12 +350,11 @@ typedef struct
 } ve_direct_data_t;
 
 extern data_t ve_data;
-extern ve_direct_data_state_t DATA_STATE data_state;
 
 extern char *LATEST_PID;
 
 void parse_frame();
-void data_set_state(DATA_STATE new_state);
-DATA_STATE data_get_state(void);
+void data_set_state(ve_direct_data_t *ve_direct_data, ve_direct_data_state_t state);
+
 
 uint8_t calculate_checksum(char *frame, uint16_t size);

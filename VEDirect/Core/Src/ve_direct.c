@@ -158,13 +158,7 @@ data_t ve_data;
 // Function to set the state
 void data_set_state(ve_direct_data_t *ve_direct_data, ve_direct_data_state_t state)
 {
-    ve_direct_data.data_state = state;
-}
-
-// Function to get the current state
-DATA_STATE data_get_state(void)
-{
-    return data_state;
+    ve_direct_data->data_state = state;
 }
 
 

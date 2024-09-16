@@ -175,15 +175,17 @@ int main(void)
     checksum = calculate_checksum(protocol_rx_buff.p_rx_buff_user, protocol_rx_buff.new_data_sz);
 
     if(checksum == 0){
-        data_set_state(&g_ve_direct_channels);
+      data_set_state(&g_ve_direct_channels, CHECKSUM_OK);
+    
+        
 
     parse_frame(protocol_rx_buff.p_rx_buff_user); //seperates frame into seperate fields and correspondind values
 
     // Map parsed fields to the structure
     parse_vedirect_data(&ve_data, &g_ve_direct_channels);
-
     }else
-        data_set_state(CHECKSUM_FAIL);
+    	data_set_state(&g_ve_direct_channels, CHECKSUM_FAIL);
+    }
 
 		  //TODO: ADD LOGGER
 
