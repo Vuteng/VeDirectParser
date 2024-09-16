@@ -207,3 +207,70 @@ void parse_frame(char *frame)
 void process_frame(data_t *src, ve_direct_data_t *dest){
     
 }
+
+// Function to print the entire structure
+void print_all_fields(const ve_direct_data_t *data) {
+    printf("V: %d mV\n", data->label.V);
+    printf("V2: %d mV\n", data->label.V2);
+    printf("V3: %d mV\n", data->label.V3);
+    printf("VS: %d mV\n", data->label.VS);
+    printf("VM: %d mV\n", data->label.VM);
+    printf("DM: %d ‰\n", data->label.DM);
+    printf("VPV: %d mV\n", data->label.VPV);
+    printf("PPV: %d W\n", data->label.PPV);
+    printf("I: %d mA\n", data->label.I);
+    printf("I2: %d mA\n", data->label.I2);
+    printf("I3: %d mA\n", data->label.I3);
+    printf("IL: %d mA\n", data->label.IL);
+    printf("LOAD: %d\n", data->label.LOAD);
+    printf("T: %d °C\n", data->label.T);
+    printf("P: %d W\n", data->label.P);
+    printf("CE: %d mAh\n", data->label.CE);
+    printf("SOC: %d ‰\n", data->label.SOC);
+    printf("TTG: %d minutes\n", data->label.TTG);
+    printf("Alarm: %d\n", data->label.Alarm);
+    printf("Relay: %d\n", data->label.Relay);
+    printf("AR: %s\n", data->label.AR);
+    printf("OR: %s\n", data->label.OR);
+    printf("H1: %d mAh\n", data->label.H1);
+    printf("H2: %d mAh\n", data->label.H2);
+    printf("H3: %d mAh\n", data->label.H3);
+    printf("H4: %d\n", data->label.H4);
+    printf("H5: %d\n", data->label.H5);
+    printf("H6: %d mAh\n", data->label.H6);
+    printf("H7: %d mV\n", data->label.H7);
+    printf("H8: %d mV\n", data->label.H8);
+    printf("H9: %d seconds\n", data->label.H9);
+    printf("H10: %d\n", data->label.H10);
+    printf("H11: %d\n", data->label.H11);
+    printf("H12: %d\n", data->label.H12);
+    printf("H13: %d\n", data->label.H13);
+    printf("H14: %d\n", data->label.H14);
+    printf("H15: %d mV\n", data->label.H15);
+    printf("H16: %d mV\n", data->label.H16);
+    printf("H17: %d 0.01 kWh\n", data->label.H17);
+    printf("H18: %d 0.01 kWh\n", data->label.H18);
+    printf("H19: %d 0.01 kWh\n", data->label.H19);
+    printf("H20: %d 0.01 kWh\n", data->label.H20);
+    printf("H21: %d W\n", data->label.H21);
+    printf("H22: %d 0.01 kWh\n", data->label.H22);
+    printf("H23: %d W\n", data->label.H23);
+    printf("ERR: %d\n", data->label.ERR);
+    printf("CS: %d\n", data->label.CS);
+    printf("BMV: %d\n", data->label.BMV);
+    printf("FW: %d\n", data->label.FW);
+    printf("FWE: %d\n", data->label.FWE);
+    printf("PID: %d\n", data->label.PID);
+    printf("SER: %d\n", data->label.SER);
+    printf("HSDS: %d\n", data->label.HSDS);
+    printf("MODE: %d\n", data->label.MODE);
+    printf("AC_OUT_V: %d 0.01 V\n", data->label.AC_OUT_V);
+    printf("AC_OUT_I: %d 0.1 A\n", data->label.AC_OUT_I);
+    printf("AC_OUT_S: %d VA\n", data->label.AC_OUT_S);
+    printf("WARN: %s\n", data->label.WARN);
+    printf("MPPT: %d\n", data->label.MPPT);
+    printf("MON: %d\n", data->label.MON);
+    printf("DC_IN_V: %d 0.01 V\n", data->label.DC_IN_V);
+    printf("DC_IN_I: %d 0.1 A\n", data->label.DC_IN_I);
+    printf("DC_IN_P: %d W\n", data->label.DC_IN_P);
+}
