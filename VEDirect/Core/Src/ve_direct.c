@@ -156,9 +156,9 @@ void parse_vedirect_data(data_t *src, ve_direct_data_t *dest) {
 data_t ve_data;
 
 // Function to set the state
-void data_set_state(DATA_STATE new_state)
+void data_set_state(ve_direct_data_t *ve_direct_data, ve_direct_data_state_t state)
 {
-    data_state = new_state;
+    ve_direct_data.data_state = state;
 }
 
 // Function to get the current state

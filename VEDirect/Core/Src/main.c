@@ -175,7 +175,7 @@ int main(void)
     checksum = calculate_checksum(protocol_rx_buff.p_rx_buff_user, protocol_rx_buff.new_data_sz);
 
     if(checksum == 0){
-        data_set_state(CHECKSUM_OK);
+        data_set_state(&g_ve_direct_channels);
 
     parse_frame(protocol_rx_buff.p_rx_buff_user); //seperates frame into seperate fields and correspondind values
 
